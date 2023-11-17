@@ -29,60 +29,52 @@ Matrix allocate_matrix(int, int);
 void deallocate_matrix(Matrix);
 
 Matrix random_dense_matrix(int, int);
-mat_and_time matMul(Matrix, Matrix);
+mat_and_time matT(Matrix);
 
 void print_matrix(Matrix, string);
 
 int main()
 {
 	srand(time(NULL));
-	ofstream report_file("report_matMul_dense.csv", std::ios_base::app);
+	ofstream report_file("reports/serial/report_matT_dense.csv", std::ios_base::app);
 	float execution_time;
 	int i, j;
 	
-	int ROW_N_A, COL_N_A, COL_N_B;
-	// For the matrices to be product compatible, if the first is ROW_N_A x COL_N_A,
-	// the second must be COL_N_A x COL_N_B.
+	int ROW_N, COL_N;
 	
 	for (i=0;i<3;++i){
 		switch(i){
 			case 0:
-				ROW_N_A = 2;
-				COL_N_A = 8;
-				COL_N_B = 2;
+				ROW_N = 2;
+				COL_N = 8;
 				break;
 			case 1:
-				ROW_N_A = 8;
-				COL_N_A = 2;
-				COL_N_B = 8;
+				ROW_N = 8;
+				COL_N = 2;
 				break;
 			case 2:
-				ROW_N_A = 8;
-				COL_N_A = 8;
-				COL_N_B = 8;
+				ROW_N = 8;
+				COL_N = 8;
 				break;
 		}
 		execution_time = 0.0;
 		
 		for (j=0;j<N_TRIALS;++j){
-			Matrix A = random_dense_matrix(ROW_N_A, COL_N_A);
+			Matrix A = random_dense_matrix(ROW_N, COL_N);
 			print_matrix(A, "A");
-			Matrix B = random_dense_matrix(COL_N_A, COL_N_B);
-			print_matrix(B, "B");
 			
-			mat_and_time C_struct = matMul(A, B);
-			Matrix C = C_struct.M;
-			print_matrix(C, "C");
+			mat_and_time AT_struct = matT(A);
+			Matrix AT = AT_struct.M;
+			print_matrix(AT, "AT");
 			
-			execution_time += C_struct.execution_time * (1.0 / N_TRIALS);
+			execution_time += AT_struct.execution_time * (1.0 / N_TRIALS);
 			
 			deallocate_matrix(A);
-			deallocate_matrix(B);
-			deallocate_matrix(C);
+			deallocate_matrix(AT);
 		}
 		
 		report_file << fixed << setprecision(6);
-		report_file << ROW_N_A << "," << COL_N_A << "," << COL_N_B << "," << execution_time << endl;
+		report_file << ROW_N << "," << COL_N << "," << execution_time << endl;
 	}
 	
 	report_file.close();
@@ -128,36 +120,27 @@ Matrix random_dense_matrix(int rows, int cols)
 	return M;
 }
 
-mat_and_time matMul(Matrix A, Matrix B)
+mat_and_time matT(Matrix A)
 {
-	Matrix C;
-	C = allocate_matrix(A.rows, B.cols);
+	Matrix AT;
+	AT = allocate_matrix(A.cols, A.rows);
 	float execution_time = 0.0;
-	int depth;
-	int i, j, k;
+	int i, j;
 	
-	if (A.cols == B.rows){
-		depth = A.cols;
-		auto start_time = chrono::high_resolution_clock::now();
-		
-		for (i=0;i<C.rows;++i){
-			for (j=0;j<C.cols;++j){
-				C.vals[i][j] = 0.0;
-				for(k=0;k<depth;++k){
-					C.vals[i][j] += A.vals[i][k] * B.vals[k][j];
-				}
-			}
+	auto start_time = chrono::high_resolution_clock::now();
+	
+	for (i=0;i<AT.rows;++i){
+		for (j=0;j<AT.cols;++j){
+			AT.vals[i][j] = A.vals[j][i];
 		}
-		
-		auto end_time = chrono::high_resolution_clock::now();
-		auto difference_time = chrono::duration_cast<chrono::microseconds>(end_time - start_time);
-		execution_time = difference_time.count() * 1e-6;
-	} else {
-		cout << "Error: not compatible matrices!" << endl;
 	}
 	
+	auto end_time = chrono::high_resolution_clock::now();
+	auto difference_time = chrono::duration_cast<chrono::microseconds>(end_time - start_time);
+	execution_time = difference_time.count() * 1e-6;
+	
 	mat_and_time retval;
-	retval.M = C;
+	retval.M = AT;
 	retval.execution_time = execution_time;
 	return retval;
 }

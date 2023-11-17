@@ -38,14 +38,14 @@ Matrix allocate_matrix(int, int, int, int);
 void deallocate_matrix(Matrix);
 
 Matrix random_sparse_matrix(int, int, int, int, float);
-mat_and_time matBlockT(Matrix);
+mat_and_time matBlockTpar(Matrix);
 
 void print_matrix(Matrix, string);
 
 int main()
 {
 	srand(time(NULL));
-	ofstream report_file("report_matBlockT_sparse.csv", std::ios_base::app);
+	ofstream report_file("reports/parallel/report_matBlockTpar_sparse.csv", std::ios_base::app);
 	float execution_time;
 	int i, j;
 	
@@ -86,7 +86,7 @@ int main()
 			Matrix A = random_sparse_matrix(ROW_N, COL_N, BLOCK_ROW_N, BLOCK_COL_N, DENSITY);
 			print_matrix(A, "A");
 			
-			mat_and_time AT_struct = matBlockT(A);
+			mat_and_time AT_struct = matBlockTpar(A);
 			Matrix AT = AT_struct.M;
 			print_matrix(AT, "AT");
 			
@@ -147,7 +147,7 @@ Matrix random_sparse_matrix(int rows, int cols, int block_rows, int block_cols, 
 	return M;
 }
 
-mat_and_time matBlockT(Matrix A)
+mat_and_time matBlockTpar(Matrix A)
 {
 	Matrix AT;
 	AT = allocate_matrix(A.cols, A.rows, A.block_cols, A.block_rows);

@@ -38,7 +38,7 @@ void print_matrix(Matrix, string);
 int main()
 {
 	srand(time(NULL));
-	ofstream report_file("report_matBlockT_dense.csv", std::ios_base::app);
+	ofstream report_file("reports/serial/report_matBlockT_dense.csv", std::ios_base::app);
 	float execution_time;
 	int i, j;
 	

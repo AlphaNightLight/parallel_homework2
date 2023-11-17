@@ -35,39 +35,34 @@ Matrix allocate_matrix(int, int);
 void deallocate_matrix(Matrix);
 
 Matrix random_sparse_matrix(int, int, float);
-mat_and_time matMul(Matrix, Matrix);
+mat_and_time matTpar(Matrix);
 
 void print_matrix(Matrix, string);
 
 int main()
 {
 	srand(time(NULL));
-	ofstream report_file("report_matMul_sparse.csv", std::ios_base::app);
+	ofstream report_file("reports/parallel/report_matTpar_sparse.csv", std::ios_base::app);
 	float execution_time;
 	int i, j;
 	
-	int ROW_N_A, COL_N_A, COL_N_B;
-	// For the matrices to be product compatible, if the first is ROW_N_A x COL_N_A,
-	// the second must be COL_N_A x COL_N_B.
+	int ROW_N, COL_N;
 	float DENSITY;
 	// The ratio between the quantity of nonzero elements and the total number of elements.
 	
 	for (i=0;i<3*3;++i){
 		switch(i%3){
 			case 0:
-				ROW_N_A = 2;
-				COL_N_A = 8;
-				COL_N_B = 2;
+				ROW_N = 2;
+				COL_N = 8;
 				break;
 			case 1:
-				ROW_N_A = 8;
-				COL_N_A = 2;
-				COL_N_B = 8;
+				ROW_N = 8;
+				COL_N = 2;
 				break;
 			case 2:
-				ROW_N_A = 8;
-				COL_N_A = 8;
-				COL_N_B = 8;
+				ROW_N = 8;
+				COL_N = 8;
 				break;
 		}
 		switch(i/3){
@@ -78,24 +73,21 @@ int main()
 		execution_time = 0.0;
 		
 		for (j=0;j<N_TRIALS;++j){
-			Matrix A = random_sparse_matrix(ROW_N_A, COL_N_A, DENSITY);
+			Matrix A = random_sparse_matrix(ROW_N, COL_N, DENSITY);
 			print_matrix(A, "A");
-			Matrix B = random_sparse_matrix(COL_N_A, COL_N_B, DENSITY);
-			print_matrix(B, "B");
 			
-			mat_and_time C_struct = matMul(A, B);
-			Matrix C = C_struct.M;
-			print_matrix(C, "C");
+			mat_and_time AT_struct = matTpar(A);
+			Matrix AT = AT_struct.M;
+			print_matrix(AT, "AT");
 			
-			execution_time += C_struct.execution_time * (1.0 / N_TRIALS);
+			execution_time += AT_struct.execution_time * (1.0 / N_TRIALS);
 			
 			deallocate_matrix(A);
-			deallocate_matrix(B);
-			deallocate_matrix(C);
+			deallocate_matrix(AT);
 		}
 		
 		report_file << fixed << setprecision(6);
-		report_file << ROW_N_A << "," << COL_N_A << "," << COL_N_B << "," << DENSITY << "," << execution_time << endl;
+		report_file << ROW_N << "," << COL_N << "," << DENSITY << "," << execution_time << endl;
 	}
 	
 	report_file.close();
@@ -143,79 +135,40 @@ Matrix random_sparse_matrix(int rows, int cols, float density)
 	return M;
 }
 
-mat_and_time matMul(Matrix A, Matrix B)
+mat_and_time matTpar(Matrix A)
 {
-	Matrix C;
-	C = allocate_matrix(A.rows, B.cols);
+	Matrix AT;
+	AT = allocate_matrix(A.cols, A.rows);
 	float execution_time = 0.0;
-	bool nonzero_flag;
-	float C_value;
-	int i, j, kA, kB;
+	int i, j;
 	
-	if (A.cols == B.rows){
-		vector<float> B_CSC_vals(B.nonzeroes);
-		vector<int> B_CSC_row_index(B.nonzeroes);
-		int* B_CSC_col_index;
-		B_CSC_col_index = new int[B.cols+1];
-		
-		auto start_time = chrono::high_resolution_clock::now();
-		
-		// Preprocessing: convert B into CSC format
-		for (i=0;i<B.cols+1;++i) B_CSC_col_index[i] = 0;
-		for (i=0;i<B.nonzeroes;++i) B_CSC_col_index[B.col_index[i]+1] += 1;
-		for (i=2;i<B.cols+1;++i) B_CSC_col_index[i] += B_CSC_col_index[i-1];
-		
-		for (i=0;i<B.rows;++i){
-			for (j=B.row_index[i];j<B.row_index[i+1];++j){
-				B_CSC_vals[B_CSC_col_index[B.col_index[j]]] = B.vals[j];
-				B_CSC_row_index[B_CSC_col_index[B.col_index[j]]] = i;
-				B_CSC_col_index[B.col_index[j]]++;
-			}
+	AT.vals.resize(A.nonzeroes);
+	AT.col_index.resize(A.nonzeroes);
+	
+	auto start_time = chrono::high_resolution_clock::now();
+	
+	//for (i=0;i<AT.rows+1;++i) AT.row_index[i] = 0; // Not needed, as already performed by allocate_matrix()
+	for (i=0;i<A.nonzeroes;++i) AT.row_index[A.col_index[i]+1] += 1;
+	for (i=2;i<AT.rows+1;++i) AT.row_index[i] += AT.row_index[i-1];
+	
+	for (i=0;i<A.rows;++i){
+		for (j=A.row_index[i];j<A.row_index[i+1];++j){
+			AT.vals[AT.row_index[A.col_index[j]]] = A.vals[j];
+			AT.col_index[AT.row_index[A.col_index[j]]] = i;
+			AT.row_index[A.col_index[j]]++;
 		}
-		
-		for (i=B.cols-1;i>0;--i) B_CSC_col_index[i] = B_CSC_col_index[i-1];
-		B_CSC_col_index[0] = 0;
-		
-		// Product
-		for (i=0;i<C.rows;++i){
-			C.row_index[i] = C.nonzeroes;
-			for (j=0;j<C.cols;++j){
-				C_value = 0.0;
-				nonzero_flag = false;
-				kA = A.row_index[i];
-				kB = B_CSC_col_index[j];
-				while(kA < A.row_index[i+1] && kB < B_CSC_col_index[j+1]){
-					if (A.col_index[kA] == B_CSC_row_index[kB]){
-						nonzero_flag = true;
-						C_value += A.vals[kA] * B_CSC_vals[kB];
-						kA++;
-						kB++;
-					} else if (A.col_index[kA] < B_CSC_row_index[kB]){
-						kA++;
-					} else { // A.col_index[kA] > B_CSC_row_index[kB]
-						kB++;
-					}
-				}
-				if (nonzero_flag){
-					C.vals.push_back(C_value);
-					C.col_index.push_back(j);
-					C.nonzeroes++;
-				}
-			}
-		}
-		C.row_index[C.rows] = C.nonzeroes;
-		
-		auto end_time = chrono::high_resolution_clock::now();
-		auto difference_time = chrono::duration_cast<chrono::microseconds>(end_time - start_time);
-		execution_time = difference_time.count() * 1e-6;
-		
-		delete [] B_CSC_col_index;
-	} else {
-		cout << "Error: not compatible matrices!" << endl;
 	}
 	
+	for (i=AT.rows-1;i>0;--i) AT.row_index[i] = AT.row_index[i-1];
+	AT.row_index[0] = 0;
+	AT.nonzeroes = AT.row_index[AT.rows];
+	
+	auto end_time = chrono::high_resolution_clock::now();
+	auto difference_time = chrono::duration_cast<chrono::microseconds>(end_time - start_time);
+	execution_time = difference_time.count() * 1e-6;
+	
 	mat_and_time retval;
-	retval.M = C;
+	retval.M = AT;
 	retval.execution_time = execution_time;
 	return retval;
 }

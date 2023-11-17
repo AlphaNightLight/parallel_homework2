@@ -29,14 +29,14 @@ Matrix allocate_matrix(int, int);
 void deallocate_matrix(Matrix);
 
 Matrix random_dense_matrix(int, int);
-mat_and_time matT(Matrix);
+mat_and_time matTpar(Matrix);
 
 void print_matrix(Matrix, string);
 
 int main()
 {
 	srand(time(NULL));
-	ofstream report_file("report_matT_dense.csv", std::ios_base::app);
+	ofstream report_file("reports/parallel/report_matTpar_dense.csv", std::ios_base::app);
 	float execution_time;
 	int i, j;
 	
@@ -63,7 +63,7 @@ int main()
 			Matrix A = random_dense_matrix(ROW_N, COL_N);
 			print_matrix(A, "A");
 			
-			mat_and_time AT_struct = matT(A);
+			mat_and_time AT_struct = matTpar(A);
 			Matrix AT = AT_struct.M;
 			print_matrix(AT, "AT");
 			
@@ -120,7 +120,7 @@ Matrix random_dense_matrix(int rows, int cols)
 	return M;
 }
 
-mat_and_time matT(Matrix A)
+mat_and_time matTpar(Matrix A)
 {
 	Matrix AT;
 	AT = allocate_matrix(A.cols, A.rows);
