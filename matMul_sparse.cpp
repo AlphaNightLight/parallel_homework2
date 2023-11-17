@@ -8,18 +8,8 @@
 
 #include <chrono>
 
-#define N_TRIALS 4
+#define N_TRIALS 1
 // To reduce spikes an averege will be performed
-
-#define DENSITY 0.3
-// The ratio between the quantity of nonzero elements and the total number of elements.
-
-#define ROW_N_A 5
-#define COL_N_A 3
-#define COL_N_B 5
-
-// For the matrices to be product compatible, if the first is ROW_N_A x COL_N_A,
-// the second must be COL_N_A x COL_N_B.
 
 using namespace std;
 
@@ -44,7 +34,7 @@ typedef struct mat_and_time
 Matrix allocate_matrix(int, int);
 void deallocate_matrix(Matrix);
 
-Matrix random_sparse_matrix(int, int);
+Matrix random_sparse_matrix(int, int, float);
 mat_and_time matMul(Matrix, Matrix);
 
 void print_matrix(Matrix, string);
@@ -54,28 +44,59 @@ int main()
 	srand(time(NULL));
 	ofstream report_file("report_matMul_sparse.csv", std::ios_base::app);
 	float execution_time;
-	int i;
+	int i, j;
 	
-	execution_time = 0.0;
-	for (i=0;i<N_TRIALS;++i){
-		Matrix A = random_sparse_matrix(ROW_N_A, COL_N_A);
-		print_matrix(A, "A");
-		Matrix B = random_sparse_matrix(COL_N_A, COL_N_B);
-		print_matrix(B, "B");
+	int ROW_N_A, COL_N_A, COL_N_B;
+	// For the matrices to be product compatible, if the first is ROW_N_A x COL_N_A,
+	// the second must be COL_N_A x COL_N_B.
+	float DENSITY;
+	// The ratio between the quantity of nonzero elements and the total number of elements.
+	
+	for (i=0;i<3*3;++i){
+		switch(i%3){
+			case 0:
+				ROW_N_A = 2;
+				COL_N_A = 8;
+				COL_N_B = 2;
+				break;
+			case 1:
+				ROW_N_A = 8;
+				COL_N_A = 2;
+				COL_N_B = 8;
+				break;
+			case 2:
+				ROW_N_A = 8;
+				COL_N_A = 8;
+				COL_N_B = 8;
+				break;
+		}
+		switch(i/3){
+			case 0: DENSITY = 0.2; break;
+			case 1: DENSITY = 0.5; break;
+			case 2: DENSITY = 0.8; break;
+		}
+		execution_time = 0.0;
 		
-		mat_and_time C_struct = matMul(A, B);
-		Matrix C = C_struct.M;
-		print_matrix(C, "C");
+		for (j=0;j<N_TRIALS;++j){
+			Matrix A = random_sparse_matrix(ROW_N_A, COL_N_A, DENSITY);
+			print_matrix(A, "A");
+			Matrix B = random_sparse_matrix(COL_N_A, COL_N_B, DENSITY);
+			print_matrix(B, "B");
+			
+			mat_and_time C_struct = matMul(A, B);
+			Matrix C = C_struct.M;
+			print_matrix(C, "C");
+			
+			execution_time += C_struct.execution_time * (1.0 / N_TRIALS);
+			
+			deallocate_matrix(A);
+			deallocate_matrix(B);
+			deallocate_matrix(C);
+		}
 		
-		execution_time += C_struct.execution_time * (1.0 / N_TRIALS);
-		
-		deallocate_matrix(A);
-		deallocate_matrix(B);
-		deallocate_matrix(C);
+		report_file << fixed << setprecision(6);
+		report_file << ROW_N_A << "," << COL_N_A << "," << COL_N_B << "," << DENSITY << "," << execution_time << endl;
 	}
-	
-	report_file << fixed << setprecision(6);
-	report_file << ROW_N_A << "," << COL_N_A << "," << COL_N_B << "," << execution_time << endl;
 	
 	report_file.close();
 	return 0;
@@ -100,11 +121,11 @@ void deallocate_matrix(Matrix M)
 	delete[] M.row_index;
 }
 
-Matrix random_sparse_matrix(int rows, int cols)
+Matrix random_sparse_matrix(int rows, int cols, float density)
 {
 	Matrix M;
 	M = allocate_matrix(rows, cols);
-	int threshold = DENSITY * 100; // The density expressed in percentage rounded to unit
+	int threshold = density * 100; // The density expressed in percentage rounded to unit
 	int i, j;
 	
 	for (i=0;i<rows;++i){

@@ -7,15 +7,8 @@
 
 #include <chrono>
 
-#define N_TRIALS 4
+#define N_TRIALS 1
 // To reduce spikes an averege will be performed
-
-#define ROW_N_A 5
-#define COL_N_A 3
-#define COL_N_B 5
-
-// For the matrices to be product compatible, if the first is ROW_N_A x COL_N_A,
-// the second must be COL_N_A x COL_N_B.
 
 using namespace std;
 
@@ -45,28 +38,52 @@ int main()
 	srand(time(NULL));
 	ofstream report_file("report_matMul_dense.csv", std::ios_base::app);
 	float execution_time;
-	int i;
+	int i, j;
 	
-	execution_time = 0.0;
-	for (i=0;i<N_TRIALS;++i){
-		Matrix A = random_dense_matrix(ROW_N_A, COL_N_A);
-		print_matrix(A, "A");
-		Matrix B = random_dense_matrix(COL_N_A, COL_N_B);
-		print_matrix(B, "B");
+	int ROW_N_A, COL_N_A, COL_N_B;
+	// For the matrices to be product compatible, if the first is ROW_N_A x COL_N_A,
+	// the second must be COL_N_A x COL_N_B.
+	
+	for (i=0;i<3;++i){
+		switch(i){
+			case 0:
+				ROW_N_A = 2;
+				COL_N_A = 8;
+				COL_N_B = 2;
+				break;
+			case 1:
+				ROW_N_A = 8;
+				COL_N_A = 2;
+				COL_N_B = 8;
+				break;
+			case 2:
+				ROW_N_A = 8;
+				COL_N_A = 8;
+				COL_N_B = 8;
+				break;
+		}
+		execution_time = 0.0;
 		
-		mat_and_time C_struct = matMul(A, B);
-		Matrix C = C_struct.M;
-		print_matrix(C, "C");
+		for (j=0;j<N_TRIALS;++j){
+			Matrix A = random_dense_matrix(ROW_N_A, COL_N_A);
+			print_matrix(A, "A");
+			Matrix B = random_dense_matrix(COL_N_A, COL_N_B);
+			print_matrix(B, "B");
+			
+			mat_and_time C_struct = matMul(A, B);
+			Matrix C = C_struct.M;
+			print_matrix(C, "C");
+			
+			execution_time += C_struct.execution_time * (1.0 / N_TRIALS);
+			
+			deallocate_matrix(A);
+			deallocate_matrix(B);
+			deallocate_matrix(C);
+		}
 		
-		execution_time += C_struct.execution_time * (1.0 / N_TRIALS);
-		
-		deallocate_matrix(A);
-		deallocate_matrix(B);
-		deallocate_matrix(C);
+		report_file << fixed << setprecision(6);
+		report_file << ROW_N_A << "," << COL_N_A << "," << COL_N_B << "," << execution_time << endl;
 	}
-	
-	report_file << fixed << setprecision(6);
-	report_file << ROW_N_A << "," << COL_N_A << "," << COL_N_B << "," << execution_time << endl;
 	
 	report_file.close();
 	return 0;

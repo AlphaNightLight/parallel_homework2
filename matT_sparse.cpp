@@ -8,14 +8,8 @@
 
 #include <chrono>
 
-#define N_TRIALS 4
+#define N_TRIALS 1
 // To reduce spikes an averege will be performed
-
-#define DENSITY 0.3
-// The ratio between the quantity of nonzero elements and the total number of elements.
-
-#define ROW_N 5
-#define COL_N 3
 
 using namespace std;
 
@@ -40,7 +34,7 @@ typedef struct mat_and_time
 Matrix allocate_matrix(int, int);
 void deallocate_matrix(Matrix);
 
-Matrix random_sparse_matrix(int, int);
+Matrix random_sparse_matrix(int, int, float);
 mat_and_time matT(Matrix);
 
 void print_matrix(Matrix, string);
@@ -50,25 +44,51 @@ int main()
 	srand(time(NULL));
 	ofstream report_file("report_matT_sparse.csv", std::ios_base::app);
 	float execution_time;
-	int i;
+	int i, j;
 	
-	execution_time = 0.0;
-	for (i=0;i<N_TRIALS;++i){
-		Matrix A = random_sparse_matrix(ROW_N, COL_N);
-		print_matrix(A, "A");
+	int ROW_N, COL_N;
+	float DENSITY;
+	// The ratio between the quantity of nonzero elements and the total number of elements.
+	
+	for (i=0;i<3*3;++i){
+		switch(i%3){
+			case 0:
+				ROW_N = 2;
+				COL_N = 8;
+				break;
+			case 1:
+				ROW_N = 8;
+				COL_N = 2;
+				break;
+			case 2:
+				ROW_N = 8;
+				COL_N = 8;
+				break;
+		}
+		switch(i/3){
+			case 0: DENSITY = 0.2; break;
+			case 1: DENSITY = 0.5; break;
+			case 2: DENSITY = 0.8; break;
+		}
+		execution_time = 0.0;
 		
-		mat_and_time AT_struct = matT(A);
-		Matrix AT = AT_struct.M;
-		print_matrix(AT, "AT");
+		for (j=0;j<N_TRIALS;++j){
+			Matrix A = random_sparse_matrix(ROW_N, COL_N, DENSITY);
+			print_matrix(A, "A");
+			
+			mat_and_time AT_struct = matT(A);
+			Matrix AT = AT_struct.M;
+			print_matrix(AT, "AT");
+			
+			execution_time += AT_struct.execution_time * (1.0 / N_TRIALS);
+			
+			deallocate_matrix(A);
+			deallocate_matrix(AT);
+		}
 		
-		execution_time += AT_struct.execution_time * (1.0 / N_TRIALS);
-		
-		deallocate_matrix(A);
-		deallocate_matrix(AT);
+		report_file << fixed << setprecision(6);
+		report_file << ROW_N << "," << COL_N << "," << DENSITY << "," << execution_time << endl;
 	}
-	
-	report_file << fixed << setprecision(6);
-	report_file << ROW_N << "," << COL_N << "," << execution_time << endl;
 	
 	report_file.close();
 	return 0;
@@ -93,11 +113,11 @@ void deallocate_matrix(Matrix M)
 	delete[] M.row_index;
 }
 
-Matrix random_sparse_matrix(int rows, int cols)
+Matrix random_sparse_matrix(int rows, int cols, float density)
 {
 	Matrix M;
 	M = allocate_matrix(rows, cols);
-	int threshold = DENSITY * 100; // The density expressed in percentage rounded to unit
+	int threshold = density * 100; // The density expressed in percentage rounded to unit
 	int i, j;
 	
 	for (i=0;i<rows;++i){

@@ -7,11 +7,8 @@
 
 #include <chrono>
 
-#define N_TRIALS 4
+#define N_TRIALS 1
 // To reduce spikes an averege will be performed
-
-#define ROW_N 5
-#define COL_N 3
 
 using namespace std;
 
@@ -41,25 +38,44 @@ int main()
 	srand(time(NULL));
 	ofstream report_file("report_matT_dense.csv", std::ios_base::app);
 	float execution_time;
-	int i;
+	int i, j;
 	
-	execution_time = 0.0;
-	for (i=0;i<N_TRIALS;++i){
-		Matrix A = random_dense_matrix(ROW_N, COL_N);
-		print_matrix(A, "A");
+	int ROW_N, COL_N;
+	
+	for (i=0;i<3;++i){
+		switch(i){
+			case 0:
+				ROW_N = 2;
+				COL_N = 8;
+				break;
+			case 1:
+				ROW_N = 8;
+				COL_N = 2;
+				break;
+			case 2:
+				ROW_N = 8;
+				COL_N = 8;
+				break;
+		}
+		execution_time = 0.0;
 		
-		mat_and_time AT_struct = matT(A);
-		Matrix AT = AT_struct.M;
-		print_matrix(AT, "AT");
+		for (j=0;j<N_TRIALS;++j){
+			Matrix A = random_dense_matrix(ROW_N, COL_N);
+			print_matrix(A, "A");
+			
+			mat_and_time AT_struct = matT(A);
+			Matrix AT = AT_struct.M;
+			print_matrix(AT, "AT");
+			
+			execution_time += AT_struct.execution_time * (1.0 / N_TRIALS);
+			
+			deallocate_matrix(A);
+			deallocate_matrix(AT);
+		}
 		
-		execution_time += AT_struct.execution_time * (1.0 / N_TRIALS);
-		
-		deallocate_matrix(A);
-		deallocate_matrix(AT);
+		report_file << fixed << setprecision(6);
+		report_file << ROW_N << "," << COL_N << "," << execution_time << endl;
 	}
-	
-	report_file << fixed << setprecision(6);
-	report_file << ROW_N << "," << COL_N << "," << execution_time << endl;
 	
 	report_file.close();
 	return 0;
