@@ -1,3 +1,7 @@
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -44,6 +48,7 @@ int main()
 	// For the matrices to be product compatible, if the first is ROW_N_A x COL_N_A,
 	// the second must be COL_N_A x COL_N_B.
 	
+	#ifdef _OPENMP
 	for (i=0;i<3;++i){
 		switch(i){
 			case 0:
@@ -82,8 +87,11 @@ int main()
 		}
 		
 		report_file << fixed << setprecision(6);
-		report_file << ROW_N_A << "," << COL_N_A << "," << COL_N_B << "," << execution_time << endl;
+		report_file << atoi(getenv("OMP_NUM_THREADS")) << "," << ROW_N_A << "," << COL_N_A << "," << COL_N_B << "," << execution_time << endl;
 	}
+	#else
+	cout << "Error: You must compile with -fopenmp flag in parallel codes!" << endl;
+	#endif
 	
 	report_file.close();
 	return 0;

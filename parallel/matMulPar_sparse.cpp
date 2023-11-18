@@ -1,3 +1,7 @@
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -52,6 +56,7 @@ int main()
 	float DENSITY;
 	// The ratio between the quantity of nonzero elements and the total number of elements.
 	
+	#ifdef _OPENMP
 	for (i=0;i<3*3;++i){
 		switch(i%3){
 			case 0:
@@ -95,8 +100,12 @@ int main()
 		}
 		
 		report_file << fixed << setprecision(6);
-		report_file << ROW_N_A << "," << COL_N_A << "," << COL_N_B << "," << DENSITY << "," << execution_time << endl;
+		report_file << atoi(getenv("OMP_NUM_THREADS")) << "," << ROW_N_A << "," << COL_N_A << "," << COL_N_B
+					<< "," << DENSITY << "," << execution_time << endl;
 	}
+	#else
+	cout << "Error: You must compile with -fopenmp flag in parallel codes!" << endl;
+	#endif
 	
 	report_file.close();
 	return 0;

@@ -1,3 +1,7 @@
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -45,6 +49,7 @@ int main()
 	int ROW_N, COL_N, BLOCK_ROW_N, BLOCK_COL_N;
 	// Each block will be a marix BLOCK_ROW_N x BLOCK_COL_N
 	
+	#ifdef _OPENMP
 	for (i=0;i<3;++i){
 		switch(i){
 			case 0:
@@ -83,8 +88,12 @@ int main()
 		}
 		
 		report_file << fixed << setprecision(6);
-		report_file << ROW_N << "," << COL_N << "," << BLOCK_ROW_N << "," << BLOCK_COL_N << "," << execution_time << endl;
+		report_file << atoi(getenv("OMP_NUM_THREADS")) << "," << ROW_N << "," << COL_N << ","
+					<< BLOCK_ROW_N << "," << BLOCK_COL_N << "," << execution_time << endl;
 	}
+	#else
+	cout << "Error: You must compile with -fopenmp flag in parallel codes!" << endl;
+	#endif
 	
 	report_file.close();
 	return 0;

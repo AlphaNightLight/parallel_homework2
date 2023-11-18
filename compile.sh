@@ -21,11 +21,11 @@ g++ -o serial/bin/matBlockT_sparse serial/matBlockT_sparse.cpp
 
 
 
-g++ -o parallel/bin/matMulPar_dense parallel/matMulPar_dense.cpp
-g++ -o parallel/bin/matMulPar_sparse parallel/matMulPar_sparse.cpp
+g++ -fopenmp -o parallel/bin/matMulPar_dense parallel/matMulPar_dense.cpp
+g++ -fopenmp -o parallel/bin/matMulPar_sparse parallel/matMulPar_sparse.cpp
 
-g++ -o parallel/bin/matTpar_dense parallel/matTpar_dense.cpp
-g++ -o parallel/bin/matTpar_sparse parallel/matTpar_sparse.cpp
+g++ -fopenmp -o parallel/bin/matTpar_dense parallel/matTpar_dense.cpp
+g++ -fopenmp -o parallel/bin/matTpar_sparse parallel/matTpar_sparse.cpp
 
-g++ -o parallel/bin/matBlockTpar_dense parallel/matBlockTpar_dense.cpp
-g++ -o parallel/bin/matBlockTpar_sparse parallel/matBlockTpar_sparse.cpp
+g++ -fopenmp -o parallel/bin/matBlockTpar_dense parallel/matBlockTpar_dense.cpp
+g++ -fopenmp -o parallel/bin/matBlockTpar_sparse parallel/matBlockTpar_sparse.cpp
