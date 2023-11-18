@@ -32,7 +32,8 @@ echo >"reports/serial/report_matBlockT_sparse.csv" ROW_N,COL_N,BLOCK_ROW_N,BLOCK
 
 
 
-echo >"reports/parallel/report_matMulPar_dense.csv" NUM_THREADS,ROW_N_A,COL_N_A,COL_N_B,time
+echo >"reports/parallel/report_matMulPar_dense_strong.csv" NUM_THREADS,ROW_N_A,COL_N_A,COL_N_B,time
+echo >"reports/parallel/report_matMulPar_dense_weak.csv" NUM_THREADS,ROW_N_A,COL_N_A,COL_N_B,time
 export OMP_NUM_THREADS=1; ./parallel/bin/matMulPar_dense.exe
 export OMP_NUM_THREADS=2; ./parallel/bin/matMulPar_dense.exe
 export OMP_NUM_THREADS=4; ./parallel/bin/matMulPar_dense.exe
@@ -41,7 +42,8 @@ export OMP_NUM_THREADS=16; ./parallel/bin/matMulPar_dense.exe
 export OMP_NUM_THREADS=32; ./parallel/bin/matMulPar_dense.exe
 export OMP_NUM_THREADS=64; ./parallel/bin/matMulPar_dense.exe
 
-echo >"reports/parallel/report_matMulPar_sparse.csv" NUM_THREADS,ROW_N_A,COL_N_A,COL_N_B,DENSITY,time
+echo >"reports/parallel/report_matMulPar_sparse_strong.csv" NUM_THREADS,ROW_N_A,COL_N_A,COL_N_B,DENSITY,time
+echo >"reports/parallel/report_matMulPar_sparse_weak.csv" NUM_THREADS,ROW_N_A,COL_N_A,COL_N_B,DENSITY,time
 export OMP_NUM_THREADS=1; ./parallel/bin/matMulPar_sparse.exe
 export OMP_NUM_THREADS=2; ./parallel/bin/matMulPar_sparse.exe
 export OMP_NUM_THREADS=4; ./parallel/bin/matMulPar_sparse.exe
@@ -50,7 +52,8 @@ export OMP_NUM_THREADS=16; ./parallel/bin/matMulPar_sparse.exe
 export OMP_NUM_THREADS=32; ./parallel/bin/matMulPar_sparse.exe
 export OMP_NUM_THREADS=64; ./parallel/bin/matMulPar_sparse.exe
 
-echo >"reports/parallel/report_matTpar_dense.csv" NUM_THREADS,ROW_N,COL_N,time
+echo >"reports/parallel/report_matTpar_dense_strong.csv" NUM_THREADS,ROW_N,COL_N,time
+echo >"reports/parallel/report_matTpar_dense_weak.csv" NUM_THREADS,ROW_N,COL_N,time
 export OMP_NUM_THREADS=1; ./parallel/bin/matTpar_dense.exe
 export OMP_NUM_THREADS=2; ./parallel/bin/matTpar_dense.exe
 export OMP_NUM_THREADS=4; ./parallel/bin/matTpar_dense.exe
@@ -59,7 +62,8 @@ export OMP_NUM_THREADS=16; ./parallel/bin/matTpar_dense.exe
 export OMP_NUM_THREADS=32; ./parallel/bin/matTpar_dense.exe
 export OMP_NUM_THREADS=64; ./parallel/bin/matTpar_dense.exe
 
-echo >"reports/parallel/report_matTpar_sparse.csv" NUM_THREADS,ROW_N,COL_N,DENSITY,time
+echo >"reports/parallel/report_matTpar_sparse_strong.csv" NUM_THREADS,ROW_N,COL_N,DENSITY,time
+echo >"reports/parallel/report_matTpar_sparse_weak.csv" NUM_THREADS,ROW_N,COL_N,DENSITY,time
 export OMP_NUM_THREADS=1; ./parallel/bin/matTpar_sparse.exe
 export OMP_NUM_THREADS=2; ./parallel/bin/matTpar_sparse.exe
 export OMP_NUM_THREADS=4; ./parallel/bin/matTpar_sparse.exe
@@ -68,7 +72,8 @@ export OMP_NUM_THREADS=16; ./parallel/bin/matTpar_sparse.exe
 export OMP_NUM_THREADS=32; ./parallel/bin/matTpar_sparse.exe
 export OMP_NUM_THREADS=64; ./parallel/bin/matTpar_sparse.exe
 
-echo >"reports/parallel/report_matBlockTpar_dense.csv" NUM_THREADS,ROW_N,COL_N,BLOCK_ROW_N,BLOCK_COL_N,time
+echo >"reports/parallel/report_matBlockTpar_dense_strong.csv" NUM_THREADS,ROW_N,COL_N,BLOCK_ROW_N,BLOCK_COL_N,time
+echo >"reports/parallel/report_matBlockTpar_dense_weak.csv" NUM_THREADS,ROW_N,COL_N,BLOCK_ROW_N,BLOCK_COL_N,time
 export OMP_NUM_THREADS=1; ./parallel/bin/matBlockTpar_dense.exe
 export OMP_NUM_THREADS=2; ./parallel/bin/matBlockTpar_dense.exe
 export OMP_NUM_THREADS=4; ./parallel/bin/matBlockTpar_dense.exe
@@ -77,7 +82,8 @@ export OMP_NUM_THREADS=16; ./parallel/bin/matBlockTpar_dense.exe
 export OMP_NUM_THREADS=32; ./parallel/bin/matBlockTpar_dense.exe
 export OMP_NUM_THREADS=64; ./parallel/bin/matBlockTpar_dense.exe
 
-echo >"reports/parallel/report_matBlockTpar_sparse.csv" NUM_THREADS,ROW_N,COL_N,BLOCK_ROW_N,BLOCK_COL_N,DENSITY,time
+echo >"reports/parallel/report_matBlockTpar_sparse_strong.csv" NUM_THREADS,ROW_N,COL_N,BLOCK_ROW_N,BLOCK_COL_N,DENSITY,time
+echo >"reports/parallel/report_matBlockTpar_sparse_weak.csv" NUM_THREADS,ROW_N,COL_N,BLOCK_ROW_N,BLOCK_COL_N,DENSITY,time
 export OMP_NUM_THREADS=1; ./parallel/bin/matBlockTpar_sparse.exe
 export OMP_NUM_THREADS=2; ./parallel/bin/matBlockTpar_sparse.exe
 export OMP_NUM_THREADS=4; ./parallel/bin/matBlockTpar_sparse.exe

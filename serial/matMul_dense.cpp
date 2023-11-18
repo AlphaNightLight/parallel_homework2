@@ -7,7 +7,7 @@
 
 #include <chrono>
 
-#define N_TRIALS 1
+#define N_TRIALS 4
 // To reduce spikes an averege will be performed
 
 using namespace std;
@@ -66,13 +66,13 @@ int main()
 		
 		for (j=0;j<N_TRIALS;++j){
 			Matrix A = random_dense_matrix(ROW_N_A, COL_N_A);
-			print_matrix(A, "A");
+			//print_matrix(A, "A"); // Debug
 			Matrix B = random_dense_matrix(COL_N_A, COL_N_B);
-			print_matrix(B, "B");
+			//print_matrix(B, "B"); // Debug
 			
 			mat_and_time C_struct = matMul(A, B);
 			Matrix C = C_struct.M;
-			print_matrix(C, "C");
+			//print_matrix(C, "C"); // Debug
 			
 			execution_time += C_struct.execution_time * (1.0 / N_TRIALS);
 			

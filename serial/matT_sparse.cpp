@@ -8,7 +8,7 @@
 
 #include <chrono>
 
-#define N_TRIALS 1
+#define N_TRIALS 4
 // To reduce spikes an averege will be performed
 
 using namespace std;
@@ -74,11 +74,11 @@ int main()
 		
 		for (j=0;j<N_TRIALS;++j){
 			Matrix A = random_sparse_matrix(ROW_N, COL_N, DENSITY);
-			print_matrix(A, "A");
+			//print_matrix(A, "A"); // Debug
 			
 			mat_and_time AT_struct = matT(A);
 			Matrix AT = AT_struct.M;
-			print_matrix(AT, "AT");
+			//print_matrix(AT, "AT"); // Debug
 			
 			execution_time += AT_struct.execution_time * (1.0 / N_TRIALS);
 			
