@@ -64,19 +64,19 @@ int main()
 		for (i=0;i<3*3;++i){
 			switch(i%3){
 				case 0:
-					ROW_N_A = 2;
-					COL_N_A = 8;
-					COL_N_B = 2;
+					ROW_N_A = 64;
+					COL_N_A = 1024;
+					COL_N_B = 64;
 					break;
 				case 1:
-					ROW_N_A = 8;
-					COL_N_A = 2;
-					COL_N_B = 8;
+					ROW_N_A = 512;
+					COL_N_A = 16;
+					COL_N_B = 512;
 					break;
 				case 2:
-					ROW_N_A = 8;
-					COL_N_A = 8;
-					COL_N_B = 8;
+					ROW_N_A = 128;
+					COL_N_A = 256;
+					COL_N_B = 128;
 					break;
 			}
 			switch(i/3){

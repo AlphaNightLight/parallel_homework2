@@ -57,22 +57,22 @@ int main()
 	for (i=0;i<3*3;++i){
 		switch(i%3){
 			case 0:
-				ROW_N = 8;
-				COL_N = 8;
-				BLOCK_ROW_N = 1;
-				BLOCK_COL_N = 1;
+				ROW_N = 2048;
+				COL_N = 2048;
+				BLOCK_ROW_N = 16;
+				BLOCK_COL_N = 16;
 				break;
 			case 1:
-				ROW_N = 8;
-				COL_N = 8;
-				BLOCK_ROW_N = 2;
-				BLOCK_COL_N = 2;
+				ROW_N = 2048;
+				COL_N = 2048;
+				BLOCK_ROW_N = 64;
+				BLOCK_COL_N = 64;
 				break;
 			case 2:
-				ROW_N = 8;
-				COL_N = 8;
-				BLOCK_ROW_N = 4;
-				BLOCK_COL_N = 4;
+				ROW_N = 2048;
+				COL_N = 2048;
+				BLOCK_ROW_N = 256;
+				BLOCK_COL_N = 256;
 				break;
 		}
 		switch(i/3){

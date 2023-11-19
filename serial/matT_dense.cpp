@@ -45,16 +45,16 @@ int main()
 	for (i=0;i<3;++i){
 		switch(i){
 			case 0:
-				ROW_N = 2;
-				COL_N = 8;
+				ROW_N = 64;
+				COL_N = 65536;
 				break;
 			case 1:
-				ROW_N = 8;
-				COL_N = 2;
+				ROW_N = 65536;
+				COL_N = 64;
 				break;
 			case 2:
-				ROW_N = 8;
-				COL_N = 8;
+				ROW_N = 2048;
+				COL_N = 2048;
 				break;
 		}
 		execution_time = 0.0;

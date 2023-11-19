@@ -1,9 +1,9 @@
 #!/bin/bash
 # Job name
-#PBS -N name
+#PBS -N IntroPARCO_homework2_alex_pegoraro
 # Output files
-#PBS -o ./name.o
-#PBS -e ./name.e
+#PBS -o ./outputs.o
+#PBS -e ./errors.e
 # Queue name
 #PBS -q short_cpuQ
 # Set the maximum wall time
@@ -12,7 +12,7 @@
 #PBS -l select=1:ncpus=64:ompthreads=64:mem=1gb
 # Mail information
 #PBS -m abe
-#PBS -M username@unitn.it
+#PBS -M alex.pegoraro@unitn.it
 
 # Modules for C
 module load gcc91
@@ -35,13 +35,5 @@ lscpu
 cd /home/username/dir
 
 # The code should be compiled before running the code
-gcc -fopenmp name.c -o name.out 
-
-export OMP_NUM_THREADS=1; ./name.out
-export OMP_NUM_THREADS=2; ./name.out
-export OMP_NUM_THREADS=4; ./name.out
-export OMP_NUM_THREADS=8; ./name.out
-export OMP_NUM_THREADS=16; ./name.out
-export OMP_NUM_THREADS=32; ./name.out
-export OMP_NUM_THREADS=64; ./name.out
-
+bash compile.sh
+bash benchmark.sh

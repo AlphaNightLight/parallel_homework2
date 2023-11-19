@@ -57,7 +57,7 @@ for (i_sparsity = 1:2)
         
         serial_extractor = i_subtype:3:rows(report_serial_full);
         report_serial = report_serial_full(serial_extractor,time_col+1);
-        report_serial = report_serial * ones(1,length(report_strong));
+        report_serial = report_serial * ones(1,columns(report_strong));
       endif
       
       
@@ -90,8 +90,12 @@ for (i_sparsity = 1:2)
       
       
       ### Speedup Plot
-      speedup_factor = report_strong(:,1) * ones(1,length(report_strong));
+      if (i_sparsity == 1)
+        report_strong = transpose(report_strong);
+      endif
+      speedup_factor = report_strong(:,1) * ones(1,columns(report_strong));
       report_strong = speedup_factor ./ report_strong;
+      
       semilogx(num_threads,num_threads,'linewidth',2,...
       num_threads,report_strong,'linewidth',2,'marker','.','markersize',30);
 
@@ -121,7 +125,8 @@ for (i_sparsity = 1:2)
       num_threads_temp = num_threads * ones(1,rows(report_strong));
       num_threads_temp = transpose(num_threads_temp);
       report_strong = (report_strong ./ num_threads_temp) * 100;
-      ideal_efficiency = ones(length(report_strong),1) * 100;
+      ideal_efficiency = ones(columns(report_strong),1) * 100;
+      
       semilogx(num_threads,ideal_efficiency,'linewidth',2,...
       num_threads,report_strong,'linewidth',2,'marker','.','markersize',30);
 
