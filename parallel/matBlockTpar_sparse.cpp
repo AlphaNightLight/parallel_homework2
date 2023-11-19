@@ -66,20 +66,20 @@ int main()
 		for (i=0;i<3*3;++i){
 			switch(i%3){
 				case 0:
-					ROW_N = 8;
-					COL_N = 8;
+					ROW_N = 4;
+					COL_N = 4;
 					BLOCK_ROW_N = 1;
 					BLOCK_COL_N = 1;
 					break;
 				case 1:
-					ROW_N = 8;
-					COL_N = 8;
+					ROW_N = 4;
+					COL_N = 4;
 					BLOCK_ROW_N = 2;
 					BLOCK_COL_N = 2;
 					break;
 				case 2:
-					ROW_N = 8;
-					COL_N = 8;
+					ROW_N = 4;
+					COL_N = 4;
 					BLOCK_ROW_N = 4;
 					BLOCK_COL_N = 4;
 					break;
@@ -230,7 +230,7 @@ mat_and_time matBlockTpar(Matrix A)
 				
 					// Transpose the block
 					// This time clear BT.row_index is needed, as allocate_matrix() is executed only one time, but BT is used more times
-					#pragma omp parallel for private(ib) shared(BT)
+					#pragma omp parallel for private(ib) shared(BT) schedule(static)
 					for (ib=0;ib<BT.rows+1;++ib) BT.row_index[ib] = 0;
 					
 					for (ib=0;ib<B.nonzeroes;++ib) BT.row_index[B.col_index[ib]+1] += 1;
@@ -238,7 +238,7 @@ mat_and_time matBlockTpar(Matrix A)
 					
 					// I will parallelize only the inner loop, as in matTpar_sparse.cpp
 					for (ib=0;ib<B.rows;++ib){
-						#pragma omp parallel for private(jb) shared(ib,B,BT)
+						#pragma omp parallel for private(jb) shared(ib,B,BT) schedule(dynamic)
 						for (jb=B.row_index[ib];jb<B.row_index[ib+1];++jb){
 							BT.vals[BT.row_index[B.col_index[jb]]] = B.vals[jb];
 							BT.col_index[BT.row_index[B.col_index[jb]]] = ib;

@@ -165,7 +165,7 @@ mat_and_time matMulPar(Matrix A, Matrix B)
 		//auto start_time = chrono::high_resolution_clock::now();
 		start_time = omp_get_wtime();
 		
-		#pragma omp parallel for collapse(2) private(i,j,k) shared(A,B,C,depth)
+		#pragma omp parallel for collapse(2) private(i,j,k) shared(A,B,C,depth) schedule(static)
 		for (i=0;i<C.rows;++i){
 			for (j=0;j<C.cols;++j){
 				C.vals[i][j] = 0.0;

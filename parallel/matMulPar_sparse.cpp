@@ -188,7 +188,7 @@ mat_and_time matMulPar(Matrix A, Matrix B)
 		start_time = omp_get_wtime();
 		
 		// Preprocessing: convert B into CSC format
-		#pragma omp parallel for private(i) shared(B,B_CSC_col_index)
+		#pragma omp parallel for private(i) shared(B,B_CSC_col_index) schedule(static)
 		for (i=0;i<B.cols+1;++i) B_CSC_col_index[i] = 0;
 		
 		for (i=0;i<B.nonzeroes;++i) B_CSC_col_index[B.col_index[i]+1] += 1;
@@ -196,7 +196,7 @@ mat_and_time matMulPar(Matrix A, Matrix B)
 		
 		// We can parallelize only the inner loop. See matTpar_sparse.cpp for the reason.
 		for (i=0;i<B.rows;++i){
-			#pragma omp parallel for private(j) shared(i,B,B_CSC_vals,B_CSC_row_index,B_CSC_col_index)
+			#pragma omp parallel for private(j) shared(i,B,B_CSC_vals,B_CSC_row_index,B_CSC_col_index) schedule(dynamic)
 			for (j=B.row_index[i];j<B.row_index[i+1];++j){
 				B_CSC_vals[B_CSC_col_index[B.col_index[j]]] = B.vals[j];
 				B_CSC_row_index[B_CSC_col_index[B.col_index[j]]] = i;
@@ -212,7 +212,7 @@ mat_and_time matMulPar(Matrix A, Matrix B)
 		C.row_index[0] = 0;
 		vector<float> local_C_vals;
 		vector<int> local_C_col_index;
-		#pragma omp parallel for ordered private(i,j,C_value,nonzero_flag,kA,kB,local_C_vals,local_C_col_index) shared(C,A,B_CSC_col_index,B_CSC_row_index,B_CSC_vals)
+		#pragma omp parallel for ordered private(i,j,C_value,nonzero_flag,kA,kB,local_C_vals,local_C_col_index) shared(C,A,B_CSC_col_index,B_CSC_row_index,B_CSC_vals) schedule(dynamic)
 		for (i=0;i<C.rows;++i){
 			for (j=0;j<C.cols;++j){
 				C_value = 0.0;

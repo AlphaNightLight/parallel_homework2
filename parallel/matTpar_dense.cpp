@@ -154,7 +154,7 @@ mat_and_time matTpar(Matrix A)
 	//auto start_time = chrono::high_resolution_clock::now();
 	start_time = omp_get_wtime();
 	
-	#pragma omp parallel for collapse(2) private(i,j) shared(A,AT)
+	#pragma omp parallel for collapse(2) private(i,j) shared(A,AT) schedule(static)
 	for (i=0;i<AT.rows;++i){
 		for (j=0;j<AT.cols;++j){
 			AT.vals[i][j] = A.vals[j][i];

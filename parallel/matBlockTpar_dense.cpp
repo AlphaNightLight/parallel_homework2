@@ -177,7 +177,7 @@ mat_and_time matBlockTpar(Matrix A)
 		//auto start_time = chrono::high_resolution_clock::now();
 		start_time = omp_get_wtime();
 		
-		#pragma omp parallel for collapse(2) private(i,j,ib,jb) firstprivate(B,BT) shared(A,AT,outer_rows,outer_cols)
+		#pragma omp parallel for collapse(2) private(i,j,ib,jb) firstprivate(B,BT) shared(A,AT,outer_rows,outer_cols) schedule(static)
 		for (i=0;i<outer_rows;++i){ // for each block
 			for (j=0;j<outer_cols;++j){
 				

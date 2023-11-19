@@ -192,7 +192,7 @@ mat_and_time matTpar(Matrix A)
 	*/
 	for (i=0;i<A.rows;++i){
 		//cout << "current i: " << i << endl;
-		#pragma omp parallel for private(j) shared(i,A,AT)
+		#pragma omp parallel for private(j) shared(i,A,AT) schedule(dynamic)
 		for (j=A.row_index[i];j<A.row_index[i+1];++j){
 			AT.vals[AT.row_index[A.col_index[j]]] = A.vals[j];
 			AT.col_index[AT.row_index[A.col_index[j]]] = i;
