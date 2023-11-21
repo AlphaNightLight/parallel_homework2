@@ -32,7 +32,7 @@ gcc --version
 lscpu
 
 # Select the working directory
-cd /home/username/dir
+cd /home/alex.pegoraro/parallel_homework2
 
 # The code should be compiled before running the code
 bash compile.sh
