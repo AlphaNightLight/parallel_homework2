@@ -12,7 +12,7 @@
 
 //#include <chrono>
 
-#define N_TRIALS 4
+#define N_TRIALS 2
 // To reduce spikes an averege will be performed
 
 using namespace std;
@@ -64,19 +64,19 @@ int main()
 		for (i=0;i<3*3;++i){
 			switch(i%3){
 				case 0:
-					ROW_N_A = 64;
-					COL_N_A = 1024;
-					COL_N_B = 64;
+					ROW_N_A = 32;
+					COL_N_A = 256;
+					COL_N_B = 32;
 					break;
 				case 1:
-					ROW_N_A = 512;
+					ROW_N_A = 128;
 					COL_N_A = 16;
-					COL_N_B = 512;
+					COL_N_B = 128;
 					break;
 				case 2:
-					ROW_N_A = 128;
-					COL_N_A = 256;
-					COL_N_B = 128;
+					ROW_N_A = 64;
+					COL_N_A = 64;
+					COL_N_B = 64;
 					break;
 			}
 			switch(i/3){
